@@ -1,8 +1,7 @@
-﻿namespace ConsoleApp1
+﻿namespace EightQueens;
+
+internal class Node
 {
-	internal class Node
-	{
-		internal bool HasQueen = false;
-		internal bool Intersect = false;
-	}
+    internal bool HasQueen = false;
+    internal bool Intersect = false;
 }

@@ -1,6 +1,6 @@
-﻿using ConsoleApp1;
+﻿using EightQueens;
 
-Board board = new(11);
+Board board = new(8);
 //List<int> list = new();
 //for (int i = 0; i < board.Size; i++)
 //{
@@ -50,10 +50,10 @@ int attemptsRandom = 0;
 bool solutionFound = false;
 while (!solutionFound)
 {
-	attemptsRandom++;
-	board.Reset();
-	board.Random();
-	solutionFound = board.Check();
+    attemptsRandom++;
+    board.Reset();
+    board.Random();
+    solutionFound = board.IsValid();
 }
 
 Console.WriteLine();
@@ -66,25 +66,29 @@ Tuple<int, int> currentLocation = new(0, 0);
 
 for (int y = 0; y < board.Size; y++)
 {
-	for (int x = 0; x < board.Size; x++)
-	{
-		solutionFound = board.Check();
-		map.Add(new(x, y, solutionFound));
+    for (int x = 0; x < board.Size; x++)
+    {
+        solutionFound = board.IsValid();
+        map.Add(new(x, y, solutionFound));
 
-		board.Shift(new(1, 0));
-	}
-	board.Shift(new(0, 1));
+        board.Shift(new(1, 0));
+    }
+    board.Shift(new(0, 1));
 }
+
+Console.WriteLine();
+
+Console.WriteLine("Dots between the T's is how much you'll have to shift the board in order to get another valid board.");
 
 Console.WriteLine();
 
 int mapSize = board.Size * 4;
 for (int y = 0; y < mapSize; y++)
 {
-	for (int x = 0; x < mapSize; x++)
-	{
-		Tuple<int, int, bool>? mapPosition = map.FirstOrDefault(o => o.Item1 == (currentLocation.Item1 + x + board.Size * mapSize) % board.Size && o.Item2 == (currentLocation.Item2 + y + board.Size * mapSize) % board.Size);
-		Console.Write(mapPosition is null ? "  " : mapPosition.Item3 ? " T" : " .");
-	}
-	Console.WriteLine();
+    for (int x = 0; x < mapSize; x++)
+    {
+        Tuple<int, int, bool>? mapPosition = map.FirstOrDefault(o => o.Item1 == (currentLocation.Item1 + x + board.Size * mapSize) % board.Size && o.Item2 == (currentLocation.Item2 + y + board.Size * mapSize) % board.Size);
+        Console.Write(mapPosition is null ? "  " : mapPosition.Item3 ? " T" : " .");
+    }
+    Console.WriteLine();
 }
