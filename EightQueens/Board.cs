@@ -4,13 +4,12 @@ internal class Board
 {
     internal Node[,] Nodes;
     internal int Size;
-    private List<Tuple<int, int>> queens;
+    private readonly List<Coordinate> queens = [];
 
     internal Board(int size)
     {
         Size = size;
         Nodes = new Node[Size, Size];
-        queens = new();
 
         for (int i = 0; i < Nodes.GetLength(0); i++)
         {
@@ -30,14 +29,13 @@ internal class Board
             for (int j = 0; j < Nodes.GetLength(1); j++)
             {
                 Nodes[i, j].HasQueen = false;
-                Nodes[i, j].Intersect = false;
             }
         }
     }
 
     internal void Random()
     {
-        List<int> ySpots = new();
+        List<int> ySpots = [];
         for (int i = 0; i < Size; i++)
         {
             ySpots.Add(i);
@@ -51,12 +49,9 @@ internal class Board
             int y = ySpots[yIndex];
 
             Node node = Nodes[x, y];
-            if (!node.HasQueen)
-            {
-                queens.Add(new(x, y));
-                node.HasQueen = true;
-                ySpots.RemoveAt(yIndex);
-            }
+            queens.Add(new(x, y));
+            node.HasQueen = true;
+            ySpots.RemoveAt(yIndex);
         }
     }
 
@@ -78,7 +73,11 @@ internal class Board
 
     internal bool IsValid()
     {
-        foreach (Tuple<int, int> queen in queens)
+        //// Check if any queens overlaps
+        //if (queens.GroupBy(o => o.x).Any(g => g.Count() > 1)) return false;
+        //if (queens.GroupBy(o => o.y).Any(g => g.Count() > 1)) return false;
+
+        foreach (var queen in queens)
         {
             if (!IsValidQueen(queen))
             {
@@ -88,32 +87,27 @@ internal class Board
         return true;
     }
 
-    internal bool IsValidQueen(Tuple<int, int> tuple)
+    internal bool IsValidQueen(Coordinate queenCoordinate)
     {
-        if (!CheckSingleLine(tuple, new(1, 1))) return false;
-        if (!CheckSingleLine(tuple, new(1, -1))) return false;
+        if (!CheckSingleLine(queenCoordinate, new(1, 1))) return false;
+        if (!CheckSingleLine(queenCoordinate, new(1, -1))) return false;
 
         return true;
     }
 
-    internal bool CheckSingleLine(Tuple<int, int> point, Tuple<int, int> direction)
+    internal bool CheckSingleLine(Coordinate queenCoordinate, Vector2 direction)
     {
-        Tuple<int, int> pointMove = point;
+        var pointMove = queenCoordinate;
         while (true)
         {
-            pointMove = new(pointMove.Item1 + direction.Item1, pointMove.Item2 + direction.Item2);
+            pointMove = new(pointMove.x + direction.x, pointMove.y + direction.y);
 
-            if (pointMove.Item1 < 0 || pointMove.Item2 < 0 || pointMove.Item1 >= Size || pointMove.Item2 >= Size)
-            {
-                return true;
-            }
+            if (pointMove.x < 0 || pointMove.y < 0 || pointMove.x >= Size || pointMove.y >= Size) return true;
 
-            Node? node = Nodes[pointMove.Item1, pointMove.Item2];
+            Node? node = Nodes[pointMove.x, pointMove.y];
 
             if (node.HasQueen)
             {
-                node.Intersect = true;
-                Nodes[point.Item1, point.Item2].Intersect = true;
                 return false;
             }
         }
@@ -162,19 +156,19 @@ internal class Board
 
     internal void Shift(Tuple<int, int> direction)
     {
-        List<Tuple<int, int>> queens = this.queens.ToList();
+        var queens = this.queens.ToList();
         Reset();
 
-        foreach (Tuple<int, int> queen in queens)
+        foreach (var queen in queens)
         {
-            int x = (queen.Item1 + direction.Item1 + Size) % Size;
-            int y = (queen.Item2 + direction.Item2 + Size) % Size;
+            int x = (queen.x + direction.Item1 + Size) % Size;
+            int y = (queen.y + direction.Item2 + Size) % Size;
             this.queens.Add(new(x, y));
         }
 
-        foreach (Tuple<int, int> queen in this.queens)
+        foreach (var queen in this.queens)
         {
-            Nodes[queen.Item1, queen.Item2].HasQueen = true;
+            Nodes[queen.x, queen.y].HasQueen = true;
         }
     }
 }

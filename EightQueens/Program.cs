@@ -1,6 +1,6 @@
 ﻿using EightQueens;
 
-Board board = new(8);
+Board board = new(15);
 //List<int> list = new();
 //for (int i = 0; i < board.Size; i++)
 //{
@@ -61,9 +61,14 @@ board.Render();
 Console.WriteLine();
 Console.WriteLine($"Attempts: {attemptsRandom}");
 
+Console.WriteLine();
+
+Console.WriteLine("Dots between the T's is how much you'll have to shift the board in order to get another valid board.");
+
+Console.WriteLine();
+
 List<Tuple<int, int, bool>> map = new();
 Tuple<int, int> currentLocation = new(0, 0);
-
 for (int y = 0; y < board.Size; y++)
 {
     for (int x = 0; x < board.Size; x++)
@@ -75,13 +80,6 @@ for (int y = 0; y < board.Size; y++)
     }
     board.Shift(new(0, 1));
 }
-
-Console.WriteLine();
-
-Console.WriteLine("Dots between the T's is how much you'll have to shift the board in order to get another valid board.");
-
-Console.WriteLine();
-
 int mapSize = board.Size * 4;
 for (int y = 0; y < mapSize; y++)
 {
