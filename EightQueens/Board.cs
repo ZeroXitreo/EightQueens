@@ -2,14 +2,14 @@
 
 internal class Board
 {
-    internal Node[,] Nodes;
+    internal bool[,] Nodes;
     internal int Size;
     private readonly List<Coordinate> queens = [];
 
     internal Board(int size)
     {
         Size = size;
-        Nodes = new Node[Size, Size];
+        Nodes = new bool[Size, Size];
 
         for (int i = 0; i < Nodes.GetLength(0); i++)
         {
@@ -28,7 +28,7 @@ internal class Board
         {
             for (int j = 0; j < Nodes.GetLength(1); j++)
             {
-                Nodes[i, j].HasQueen = false;
+                Nodes[i, j] = false;
             }
         }
     }
@@ -48,26 +48,9 @@ internal class Board
             int yIndex = rnd.Next(Size - i);
             int y = ySpots[yIndex];
 
-            Node node = Nodes[x, y];
+            Nodes[x, y] = true;
             queens.Add(new(x, y));
-            node.HasQueen = true;
             ySpots.RemoveAt(yIndex);
-        }
-    }
-
-    internal void TrySequence(List<int> sequence)
-    {
-        for (int i = 0; i < Size; i++)
-        {
-            int x = i;
-            int y = sequence[x];
-
-            Node node = Nodes[x, y];
-            if (!node.HasQueen)
-            {
-                queens.Add(new(x, y));
-                node.HasQueen = true;
-            }
         }
     }
 
@@ -104,9 +87,7 @@ internal class Board
 
             if (pointMove.x < 0 || pointMove.y < 0 || pointMove.x >= Size || pointMove.y >= Size) return true;
 
-            Node? node = Nodes[pointMove.x, pointMove.y];
-
-            if (node.HasQueen)
+            if (Nodes[pointMove.x, pointMove.y])
             {
                 return false;
             }
@@ -128,7 +109,7 @@ internal class Board
             for (int x = 0; x < Nodes.GetLength(1); x++)
             {
                 SwitchColor((x + y) % 2 == 0);
-                if (Nodes[x, y].HasQueen)
+                if (Nodes[x, y])
                 {
                     Console.BackgroundColor = ConsoleColor.Red;
                     Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -168,7 +149,7 @@ internal class Board
 
         foreach (var queen in this.queens)
         {
-            Nodes[queen.x, queen.y].HasQueen = true;
+            Nodes[queen.x, queen.y] = true;
         }
     }
 }
